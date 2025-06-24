@@ -1,0 +1,219 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>F-lance</title>
+  <meta name="description" content="F-lance offers freelance design, custom invitation cards, and digital services. Discover creative designs now.">
+  <link rel="icon" href="/static/favicon.ico">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-aeXNzSRo5Z+hOgGvZPqQbpl7QxehG9vZquPfX+jwbhvKckim+K6vQOX4D3KUu1XWzO2vRt0O3egU02v79FQj5A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "F-lance",
+    "url": "https://yourwebsite.com",
+    "sameAs": [
+      "https://instagram.com/f_lance2",
+      "https://facebook.com/f_lance2"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "email": "flance.498@gmail.com",
+      "contactTyp": "Customer Service"
+    }
+  }
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+
+    /* Loader transition */
+    #loader-screen {
+      transition: opacity 0.5s ease;
+    }
+  </style>
+</head>
+
+<body class="text-gray-800" style="background-image: url('/static/images/FL.jpg'); background-size: cover; background-attachment: fixed;">
+  
+  <!-- ✅ Logo Splash Loader -->
+  <div id="loader-screen" class="fixed inset-0 bg-white flex items-center justify-center z-50">
+    <img src="/static/images/flance-logo.png" alt="F-lance Logo" class="w-32 h-auto animate-pulse">
+  </div>
+
+  <div class="bg-white/80 min-h-screen backdrop-blur-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <nav class="bg-white shadow sticky top-0 z-50">
+        <div class="flex justify-between items-center px-6 py-4">
+          <h1 class="text-xl font-bold text-blue-700">F-lance</h1>
+          <div class="hidden md:flex space-x-4">
+              <a href="#services" class="text-gray-700 hover:text-blue-600">Services</a>
+              <a href="#cards" class="text-gray-700 hover:text-blue-600">Cards</a>
+              <a href="#contact" class="text-gray-700 hover:text-blue-600">Contact</a>
+          </div>
+        </div>
+      </nav>
+
+      <header class="bg-white shadow-md p-6">
+        <h1 class="text-3xl font-bold text-center text-blue-700">F-lance--"freelance services"</h1>
+        <p class="text-center text-gray-500 mt-2">We Design. We Develop. We Deliver.</p>
+      </header>
+
+      <main class="p-8">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="max-w-xl mx-auto mb-6">
+              {% for category, message in messages %}
+              <div class="p-4 rounded-xl text-sm font-medium 
+                          {% if category == 'success' %}
+                              bg-green-100 text-green-700
+                          {% elif category == 'error' %}
+                              bg-red-100 text-red-700
+                          {% else %}
+                              bg-gray-100 text-gray-700
+                          {% endif %}">
+                {{ message }}
+              </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <!-- Services -->
+        <section id="services" class="text-center mb-12">
+          <h2 class="text-2xl font-semibold text-gray-700">Our Services</h2>
+          <p class="mt-3 text-gray-500">Explore the wide range of digital solutions we offer.</p>
+        </section>
+
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {% for category, services in services.items() %}
+          <div class="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition-all">
+            <h3 class="text-xl font-bold text-blue-600 mb-4">{{ category }}</h3>
+            <ul class="list-disc list-inside text-gray-600 space-y-1">
+              {% for service in services %}
+              <li>{{ service }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endfor %}
+        </section>
+
+        <button onclick="openModal()" class="block text-center bg-blue-600 text-white py-3 px-6 rounded-xl mt-6 hover:bg-blue-700 w-max mx-auto">
+  Request a Custom Card
+        </button>
+
+
+        <!-- Cards -->
+        <section id="cards" class="mt-16 px-4">
+          <h2 class="text-2xl font-semibold text-gray-700 text-center mb-8">Custom Invitation Cards Collection</h2>
+          <div class="overflow-x-auto whitespace-nowrap flex space-x-4 pb-4">
+            {% for card in cards %}
+            <div class="inline-block bg-white rounded-2xl shadow-md p-4 w-64 flex-shrink-0">
+              {% if card.image_url.endswith('.mp4') or card.image_url.endswith('.webm') %}
+                <video class="rounded-xl w-full mb-4" autoplay muted loop playsinline>
+                  <source src="{{ card.image_url }}" type="video/mp4">
+                </video>
+              {% else %}
+                <img src="{{ card.image_url }}" alt="{{ card.title }}" class="rounded-xl w-full mb-4" loading="lazy">
+              {% endif %}
+              <h3 class="font-bold text-lg text-center">
+                {% if card.id is defined %}
+                  <a href="{{ url_for('card_detail', card_id=card.id) }}" class="text-blue-600 hover:underline">
+                    {{ card.title }}
+                  </a>
+                {% else %}
+                  <span class="text-red-600 font-medium">Invalid Card (Missing ID)</span>
+                {% endif %}
+              </h3>
+            </div>
+            {% endfor %}
+          </div>
+        </section>
+
+      </main>
+
+      <!-- Contact -->
+      <footer class="text-center py-6 text-sm text-gray-500 border-t mt-12">
+        <section id="contact" class="mt-16 px-8 max-w-4xl mx-auto">
+          <h2 class="text-2xl font-semibold text-gray-700 text-center mb-6">Get in Touch</h2>
+          <div class="bg-white rounded-2xl shadow-md p-6 space-y-8">
+  <!-- Contact Form -->
+  <form action="/contact" method="POST" class="space-y-4 text-left">
+    <div>
+      <label for="name" class="block font-medium text-gray-700">Your Name</label>
+      <input type="text" name="name" id="name" required class="w-full border p-3 rounded-xl">
+    </div>
+    <div>
+      <label for="email" class="block font-medium text-gray-700">Your Email</label>
+      <input type="email" name="email" id="email" required class="w-full border p-3 rounded-xl">
+    </div>
+    <div>
+      <label for="phone" class="block font-medium text-gray-700">Phone Number</label>
+      <input type="text" name="phone" id="phone" required class="w-full border p-3 rounded-xl">
+    </div>
+    <div>
+      <label for="service" class="block font-medium text-gray-700">What Service Are You Interested In?</label>
+      <input type="text" name="service" id="service" required class="w-full border p-3 rounded-xl">
+    </div>
+    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl w-full">
+      Submit Request
+    </button>
+  </form>
+
+  <!-- Success message -->
+  {% if success_message %}
+    <p class="text-green-600 font-medium text-center mt-4">{{ success_message }}</p>
+  {% endif %}
+
+  <!-- Keep your contact icons as-is -->
+  <div class="text-gray-800 space-y-2 text-lg mt-6 text-center">
+    <p>
+      <i class="fas fa-envelope text-blue-600 mr-2"></i>
+      <a href="mailto:flance.498@gmail.com" class="text-blue-600 hover:underline">flance.498@gmail.com</a>
+    </p>
+    <p>
+      <i class="fab fa-whatsapp text-green-600 mr-2"></i>
+      <a href="https://wa.me/917895779101" target="_blank" class="hover:underline text-green-700">+91 98765 43210</a> |
+      <a href="https://wa.me/918218281477" target="_blank" class="hover:underline text-green-700">+91 87654 32109</a>
+    </p>
+    <p>
+      <i class="fab fa-instagram text-pink-500 mr-2"></i>
+      <a href="https://instagram.com/yourprofile" target="_blank" class="text-pink-600 hover:underline">@//instagram.com/f_lance2</a>
+    </p>
+    <p>
+      <i class="fab fa-facebook text-blue-700 mr-2"></i>
+      <a href="https://facebook.com/yourpage" target="_blank" class="text-blue-700 hover:underline">@//facebook.com/f_lance2</a>
+    </p>
+  </div>
+</div>
+
+          </div>
+        </section>
+         
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- ✅ Loader fade-out script -->
+  <script>
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const loader = document.getElementById('loader-screen');
+        if (loader) {
+          loader.classList.add('opacity-0');
+          loader.classList.add('pointer-events-none');
+          setTimeout(() => loader.remove(), 500);
+        }
+      }, 1000); // 1 second delay
+    });
+  </script>
+   &copy; 2025 F-lance. All rights reserved.
+</body>
+</html>

@@ -1,0 +1,35 @@
+[
+    {
+        "id": 1,
+        "title": "Sample Card 1",
+        "image_url": "/static/cards/p.jpg"
+    },
+    {
+        "id": 2,
+        "title": "Sample Card ",
+        "image_url": "/static/cards/q.jpg"
+    },
+    {
+       "id":3,
+        "title": "Sample Card 3",
+        "image_url": "/static/cards/r.jpg"
+    },
+    {
+        "id": 4,
+        "title": "Sample Card 4",
+        "image_url": "/static/cards/ex.mp4"
+    },
+   
+    {
+        "id": 5,
+          "title": "Wedding Invite (Image)",
+          "image_url": "/static/cards/wed.jpg"
+    },
+    {
+        "id": 6,
+          "title": "Birthday Invite (Video)",
+          "image_url": "/static/cards/birthday.mp4"
+    }
+     
+      
+]
