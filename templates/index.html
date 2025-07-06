@@ -57,6 +57,19 @@
               <a href="#cards" class="text-gray-700 hover:text-blue-600">Cards</a>
               <a href="#contact" class="text-gray-700 hover:text-blue-600">Contact</a>
           </div>
+          {% if not session.get('admin') %}
+          <a href="{{ url_for('login') }}" class="text-sm bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition ml-4 hidden md:inline-block">
+                Admin Login
+          </a>
+          {% else %}
+          <a href="{{ url_for('admin') }}" class="text-sm bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition ml-4 hidden md:inline-block">
+                Admin Panel
+           </a>
+           <a href="{{ url_for('logout') }}" class="text-sm bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition ml-2 hidden md:inline-block">
+               Logout
+            </a>
+          {% endif %}
+
         </div>
       </nav>
 
@@ -105,7 +118,7 @@
         </section>
 
         <button onclick="openModal()" class="block text-center bg-blue-600 text-white py-3 px-6 rounded-xl mt-6 hover:bg-blue-700 w-max mx-auto">
-  Request a Custom Card
+         Request a Custom Card
         </button>
 
 
@@ -113,64 +126,38 @@
         <section id="cards" class="mt-16 px-4">
           <h2 class="text-2xl font-semibold text-gray-700 text-center mb-8">Custom Invitation Cards Collection</h2>
           <div class="overflow-x-auto whitespace-nowrap flex space-x-4 pb-4">
-            {% for card in cards %}
-            <div class="inline-block bg-white rounded-2xl shadow-md p-4 w-64 flex-shrink-0">
-              {% if card.image_url.endswith('.mp4') or card.image_url.endswith('.webm') %}
-                <video class="rounded-xl w-full mb-4" autoplay muted loop playsinline>
-                  <source src="{{ card.image_url }}" type="video/mp4">
-                </video>
-              {% else %}
-                <img src="{{ card.image_url }}" alt="{{ card.title }}" class="rounded-xl w-full mb-4" loading="lazy">
-              {% endif %}
-              <h3 class="font-bold text-lg text-center">
-                {% if card.id is defined %}
-                  <a href="{{ url_for('card_detail', card_id=card.id) }}" class="text-blue-600 hover:underline">
-                    {{ card.title }}
-                  </a>
-                {% else %}
-                  <span class="text-red-600 font-medium">Invalid Card (Missing ID)</span>
-                {% endif %}
-              </h3>
-            </div>
-            {% endfor %}
+           {% for card in cards %}
+  {% if card.title and card.image_url %}
+    <div class="bg-white p-4 rounded-xl shadow hover:shadow-lg transition-shadow duration-300">
+      {% if card.image_url.endswith('.mp4') or card.image_url.endswith('.webm') %}
+        <video class="rounded mb-2 w-full" controls>
+          <source src="{{ card.image_url }}" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      {% else %}
+        <img src="{{ card.image_url }}" class="rounded mb-2">
+      {% endif %}
+
+      <p class="text-sm text-gray-600">Category: {{ card.category or 'Uncategorized' }}</p>
+      <h3 class="text-center font-semibold mb-2 truncate" title="{{ card['title'] }}">{{ card['title'] }}</h3>
+
+      <form action="{{ url_for('delete_card', card_id=card['id']) }}" method="post">
+        <button class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600 w-full" onclick="return confirm('Are you sure?')">
+          Delete
+        </button>
+      </form>
+    </div>
+  {% endif %}
+{% endfor %}
+
           </div>
         </section>
 
       </main>
-
-      <!-- Contact -->
-      <footer class="text-center py-6 text-sm text-gray-500 border-t mt-12">
-        <section id="contact" class="mt-16 px-8 max-w-4xl mx-auto">
-          <h2 class="text-2xl font-semibold text-gray-700 text-center mb-6">Get in Touch</h2>
-          <div class="bg-white rounded-2xl shadow-md p-6 space-y-8">
-  <!-- Contact Form -->
-  <form action="/contact" method="POST" class="space-y-4 text-left">
-    <div>
-      <label for="name" class="block font-medium text-gray-700">Your Name</label>
-      <input type="text" name="name" id="name" required class="w-full border p-3 rounded-xl">
-    </div>
-    <div>
-      <label for="email" class="block font-medium text-gray-700">Your Email</label>
-      <input type="email" name="email" id="email" required class="w-full border p-3 rounded-xl">
-    </div>
-    <div>
-      <label for="phone" class="block font-medium text-gray-700">Phone Number</label>
-      <input type="text" name="phone" id="phone" required class="w-full border p-3 rounded-xl">
-    </div>
-    <div>
-      <label for="service" class="block font-medium text-gray-700">What Service Are You Interested In?</label>
-      <input type="text" name="service" id="service" required class="w-full border p-3 rounded-xl">
-    </div>
-    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl w-full">
-      Submit Request
-    </button>
-  </form>
-
-  <!-- Success message -->
-  {% if success_message %}
-    <p class="text-green-600 font-medium text-center mt-4">{{ success_message }}</p>
-  {% endif %}
-
+      <!--submit form for user-->
+      <button id="openPopup" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+            Request a Service
+      </button>     
   <!-- Keep your contact icons as-is -->
   <div class="text-gray-800 space-y-2 text-lg mt-6 text-center">
     <p>
@@ -200,20 +187,26 @@
 
     </div>
   </div>
+  <!-- Popup Background -->
+    <div id="popupForm" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96 transform scale-90 opacity-0 transition-all duration-300" id="formBox">
+        <h2 class="text-xl font-bold mb-4">Contact Us</h2>
+        <form id="serviceForm">
+            <input type="text" name="name" placeholder="Your Name" required class="w-full mb-2 p-2 border rounded">
+            <input type="email" name="email" placeholder="Your Email" required class="w-full mb-2 p-2 border rounded">
+            <input type="text" name="mobile" placeholder="Your Mobile" required class="w-full mb-2 p-2 border rounded">
+            <input type="text" name="service" placeholder="Service You Want" required class="w-full mb-4 p-2 border rounded">
+            <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition">Submit</button>
+            <button type="button" id="closePopup" class="ml-2 text-red-500">Cancel</button>
+        </form>
+        <p id="successMsg" class="text-green-500 mt-2 hidden">Form Submitted Successfully!</p>
+    </div>
+</div>
 
-  <!-- ✅ Loader fade-out script -->
-  <script>
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        const loader = document.getElementById('loader-screen');
-        if (loader) {
-          loader.classList.add('opacity-0');
-          loader.classList.add('pointer-events-none');
-          setTimeout(() => loader.remove(), 500);
-        }
-      }, 1000); // 1 second delay
-    });
-  </script>
+
+ 
+   <!-- ✅ Load external JS file -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
    &copy; 2025 F-lance. All rights reserved.
 </body>
 </html>

@@ -6,13 +6,15 @@
 
 import os
 import json
-from flask import Flask,session,flash, render_template, request, redirect, url_for, send_from_directory,send_file,abort
+from flask import Flask,session,flash, render_template, request, redirect, url_for, send_from_directory,send_file,abort,jsonify
 import qrcode
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from functools import wraps
 from flask_mail import Mail,Message
 from dotenv import load_dotenv
+import smtplib
+from email.mime.text import MIMEText
 
 load_dotenv()  #Load .env variables
 
@@ -73,19 +75,21 @@ def load_cards():
     if os.path.exists(CARD_DB):
         try:
             with open(CARD_DB, 'r') as f:
-                return json.load(f)
+                cards = json.load(f)
+                # Filter out invalid cards
+                return [c for c in cards if c.get('title') and c.get('image_url')]
         except json.JSONDecodeError:
-            return []  # Return empty if JSON is invalid
+            return []
     else:
-        # Create the file with an empty list if it doesn't exist
         with open(CARD_DB, 'w') as f:
             json.dump([], f)
         return []
 
-# Save card metadata
+
+# Save card metadatass
 def save_cards(cards):
     with open(CARD_DB, 'w') as f:
-        json.dump(cards, f)
+        json.dump(cards, f, indent=2)
 
 # Sample service dictionary
 services = {
@@ -106,6 +110,7 @@ def admin():
 
 @app.route('/', methods=['GET'])
 def index():
+    print("Adin session:", session.get('admin'))
     cards = load_cards()
     print(cards) # debugging check the console output for cards
     return render_template('index.html', services=services, cards=cards)
@@ -130,31 +135,32 @@ def download_qr(filename):
 
 @app.route('/upload_card', methods=['POST'])
 def upload_card():
-    if not session.get('admin'):  # Admin-only access
+    if not session.get('admin'):
         flash("Unauthorized access.", "error")
         return redirect(url_for('index'))
     
     title = request.form['title']
+    category = request.form.get('category', 'General')  # <-- Category from form
     file = request.files['card_image']
-    filename = secure_filename(file.filename)
     
-    # Validate file type
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    filename = f"{timestamp}_{secure_filename(file.filename)}"
+    
     ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif', 'mp4', 'webm'}
     if '.' in filename and filename.rsplit('.', 1)[1].lower() not in ALLOWED_EXTENSIONS:
-        flash("Invalid file type. Only images and videos are allowed. File format should ve jpg, .jpeg, .png, .gif, .mp4, .webm", "error")
+        flash("Invalid file type. Only images and videos are allowed.", "error")
         return redirect(url_for('admin'))
 
     path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     file.save(path)
 
     cards = load_cards()
-
-        # Get the highest existing ID and add 1
     new_id = max((card.get('id', 0) for card in cards), default=0) + 1
 
     cards.append({
         "id": new_id,
         "title": title,
+        "category": category,
         "image_url": url_for('static', filename=f'cards/{filename}')
     })
 
@@ -162,6 +168,19 @@ def upload_card():
     flash("Card uploaded successfully!", "success")
     return redirect(url_for('admin'))
 
+@app.route('/clear_qr')
+def clear_qr_folder():
+    if not session.get('admin'):
+        return "Unauthorized", 403
+    for file in os.listdir(QR_FOLDER):
+        file_path = os.path.join(QR_FOLDER, file)
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+    flash("QR folder cleaned up.", "success")
+    return redirect(url_for('admin'))
+
+    
+   
 @app.route('/card/<int:card_id>')
 def card_detail(card_id):
     cards = load_cards()  # <-- Load from JSON

@@ -46,6 +46,14 @@
      required onchange="previewCard(this)" class="w-full border p-3 rounded-xl mb-4">
     <!-- Preview section -->
    <div id="preview" class="mb-4"></div>
+    <label for="category" class="block text-sm font-medium mb-1">Category</label>
+  <select name="category" id="category" class="w-full mb-4 p-2 border rounded">
+  <option value="General">General</option>
+  <option value="Wedding">Wedding</option>
+  <option value="Birthday">Birthday</option>
+  <option value="Festival">Festival</option>
+  <option value="Business">Business</option>
+  </select>
 
 
 
@@ -64,10 +72,10 @@
         <source src="{{ card.image_url }}" type="video/mp4">
          Your browser does not support the video tag.
       </video>
-{% else %}
-  <img src="{{ card.image_url }}" class="rounded mb-2">
-{% endif %}
-
+    {% else %}
+        <img src="{{ card.image_url }}" class="rounded mb-2">
+    {% endif %}
+    <p class="text-sm text-gray-600">Category: {{ card.category }}</p>
     <h3 class="font-semibold text-center mb-2 truncate" title="{{ card['title'] }}">{{ card['title'] }}</h3>
     <form action="{{ url_for('delete_card', card_id=card['id']) }}" method="post">
       <button class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600 w-full" onclick="return confirm('Are you sure?')">Delete</button>
@@ -92,6 +100,12 @@
    class="block text-center mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
    Download QR
 </a>
+<!--delete qr or clean up-->
+<form action="/clear_qr" method="get" class="inline">
+  <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+    Clear QR Folder
+  </button>
+</form>
 
 
       </div>
