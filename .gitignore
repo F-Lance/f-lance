@@ -1,1 +1,32 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+
+# Flask environment variables
 .env
+
+# VS Code settings
+.vscode/
+
+# MacOS / Windows hidden files
+.DS_Store
+Thumbs.db
+
+# Logs and debug files
+*.log
+
+# Database or instance files (if you use SQLite, etc.)
+*.sqlite3
+instance/
+
+# Render deployment config (optional if personal)
+render.yaml
+
+# Python egg metadata
+*.egg-info/
