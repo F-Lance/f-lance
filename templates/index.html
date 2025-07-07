@@ -116,12 +116,7 @@
           </div>
           {% endfor %}
         </section>
-
-        <button onclick="openModal()" class="block text-center bg-blue-600 text-white py-3 px-6 rounded-xl mt-6 hover:bg-blue-700 w-max mx-auto">
-         Request a Custom Card
-        </button>
-
-
+        
         <!-- Cards -->
         <section id="cards" class="mt-16 px-4">
           <h2 class="text-2xl font-semibold text-gray-700 text-center mb-8">Custom Invitation Cards Collection</h2>
@@ -140,12 +135,13 @@
 
       <p class="text-sm text-gray-600">Category: {{ card.category or 'Uncategorized' }}</p>
       <h3 class="text-center font-semibold mb-2 truncate" title="{{ card['title'] }}">{{ card['title'] }}</h3>
-
-      <form action="{{ url_for('delete_card', card_id=card['id']) }}" method="post">
-        <button class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600 w-full" onclick="return confirm('Are you sure?')">
-          Delete
-        </button>
-      </form>
+      {% if session.get('admin') %}
+        <form action="{{ url_for('delete_card', card_id=card['id']) }}" method="post">
+          <button class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600 w-full" onclick="return confirm('Are you sure?')">
+              Delete
+          </button>
+        </form>
+      {% endif %}
     </div>
   {% endif %}
 {% endfor %}
