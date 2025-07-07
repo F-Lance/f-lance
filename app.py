@@ -38,12 +38,12 @@ def custom_static(filename):
         return abort(404)
 
 # Add your secret key here
-app.secret_key = os.getenv('SECRET_KEY', 'defaultfallbackkey') # Replace 'supersecretkey' with a strong and secure key
+app.secret_key = os.getenv('SECRET_KEY', 'defaultfallbackkey') 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')  # from .env
-app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')  # from .env
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')  
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD') 
 app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')
 
 mail = Mail(app)
