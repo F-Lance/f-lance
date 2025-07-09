@@ -2,7 +2,7 @@
   {
     "id": 1,
     "title": "Sample Card 1",
-    "image_url": "/static/cards/p.jpg"
+    "image_url": "/static/cards/ex.mp4"
   },
   {
     "id": 2,
@@ -12,27 +12,12 @@
   {
     "id": 3,
     "title": "Sample Card 3",
-    "image_url": "/static/cards/r.jpg"
+    "image_url": "/static/cards/p.jpg"
   },
   {
     "id": 4,
     "title": "Sample Card 4",
-    "image_url": "/static/cards/ex.mp4"
-  },
-  {
-    "id": 5,
-    "title": "Wedding Invite (Image)",
-    "image_url": "/static/cards/wed.jpg"
-  },
-  {
-    "id": 6,
-    "title": "Birthday Invite (Video)",
-    "image_url": "/static/cards/birthday.mp4"
-  },
-  {
-    "id": 7,
-    "title": "rough",
-    "category": "General",
     "image_url": "/static/cards/20250704083105_IMG-20250617-WA0000.jpg"
-  }
+  },
+  
 ]
