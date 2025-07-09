@@ -187,10 +187,10 @@
     <div id="popupForm" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
     <div class="bg-white p-6 rounded-lg shadow-lg w-96 transform scale-90 opacity-0 transition-all duration-300" id="formBox">
         <h2 class="text-xl font-bold mb-4">Contact Us</h2>
-        <form id="serviceForm">
+        <form id="serviceForm" method="POST" action="/contact">
             <input type="text" name="name" placeholder="Your Name" required class="w-full mb-2 p-2 border rounded">
             <input type="email" name="email" placeholder="Your Email" required class="w-full mb-2 p-2 border rounded">
-            <input type="text" name="mobile" placeholder="Your Mobile" required class="w-full mb-2 p-2 border rounded">
+            <input type="text" name="phone" placeholder="Your Mobile" required class="w-full mb-2 p-2 border rounded">
             <input type="text" name="service" placeholder="Service You Want" required class="w-full mb-4 p-2 border rounded">
             <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition">Submit</button>
             <button type="button" id="closePopup" class="ml-2 text-red-500">Cancel</button>
